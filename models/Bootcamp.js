@@ -1,6 +1,6 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export const BootcampSchema = new Schema({
+const BootcampSchema = new Schema({
   name: {
     type: String,
     required: [true, "Please add a name"],
@@ -95,3 +95,5 @@ export const BootcampSchema = new Schema({
     default: Date.now,
   },
 });
+
+export default model("Bootcamp", BootcampSchema);
