@@ -1,20 +1,19 @@
-import express from "express";
+import express from 'express'
 import {
   createBootcamp,
   deleteBootcamp,
   getBootcamp,
   getBootcamps,
   updateBootcamp,
-} from "../controllers/bootcamps.js";
+} from '../controllers/bootcamps.js'
+import courseRouter from './courses.js'
 
-const router = express.Router();
+const router = express.Router()
 
-router.route("/").get(getBootcamps).post(createBootcamp);
+router.use('/:bootcampId/courses', courseRouter)
 
-router
-  .route("/:id")
-  .get(getBootcamp)
-  .put(updateBootcamp)
-  .delete(deleteBootcamp);
+router.route('/').get(getBootcamps).post(createBootcamp)
 
-export default router;
+router.route('/:id').get(getBootcamp).put(updateBootcamp).delete(deleteBootcamp)
+
+export default router
