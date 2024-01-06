@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import colors from 'colors'
 
 const CourseSchema = new mongoose.Schema({
   title: {
@@ -36,6 +37,36 @@ const CourseSchema = new mongoose.Schema({
     ref: 'Bootcamp',
     required: true,
   },
+})
+
+CourseSchema.statics.getAverageCost = async function (bootcampId) {
+  const obj = await this.aggregate([
+    {
+      $match: { bootcamp: bootcampId },
+    },
+    {
+      $group: {
+        _id: '$bootcamp',
+        averageCost: { $avg: '$tuition' },
+      },
+    },
+  ])
+
+  try {
+    await this.model('Bootcamp').findByIdAndUpdate(bootcampId, {
+      averageCost: Math.ceil(obj[0].averageCost / 10) * 10,
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+CourseSchema.post('save', function () {
+  this.constructor.getAverageCost(this.bootcamp)
+})
+
+CourseSchema.pre('deleteOne', function () {
+  this.constructor.getAverageCost(this.bootcamp)
 })
 
 export default mongoose.model('Course', CourseSchema)
