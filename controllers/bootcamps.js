@@ -18,6 +18,16 @@ export const getBootcamp = asyncHandler(async (req, res, next) => {
 })
 
 export const createBootcamp = asyncHandler(async (req, res, next) => {
+  req.body.user = req.user.id
+
+  const publishedBootcamp = await Bootcamp.findOne({ user: req.user.id })
+
+  if (publishedBootcamp && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`The user with ID ${req.user.id} has already published a bootcamp`, 400)
+    )
+  }
+
   const bootcamp = await Bootcamp.create(req.body)
 
   res.status(201).json({ success: true, data: bootcamp })
