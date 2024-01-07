@@ -9,6 +9,7 @@ import { connectDB } from './config/db.js'
 import { errorHandler } from './middleware/error.js'
 import bootcamps from './routes/bootcamps.js'
 import courses from './routes/courses.js'
+import auth from './routes/auth.js'
 
 dotenv.config({ path: './config/config.env' })
 
@@ -26,6 +27,7 @@ app.use(express.static(path.resolve(__dirname, 'public')))
 
 app.use('/api/v1/bootcamps', bootcamps)
 app.use('/api/v1/courses', courses)
+app.use('/api/v1/auth', auth)
 
 app.use(errorHandler)
 
