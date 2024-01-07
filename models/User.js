@@ -43,4 +43,8 @@ UserSchema.methods.getSignedJwtToken = function () {
   })
 }
 
+UserSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password)
+}
+
 export default mongoose.model('User', UserSchema)
