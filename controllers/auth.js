@@ -2,6 +2,7 @@ import Bootcamp from '../models/Bootcamp.js'
 import { ErrorResponse } from '../utils/errorResponse.js'
 import { asyncHandler } from '../middleware/async.js'
 import User from '../models/User.js'
+import { sendEmail } from '../utils/sendEmail.js'
 
 export const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body
@@ -48,6 +49,26 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
   const resetToken = user.getResetPasswordToken()
 
   await user.save({ validateBeforeSave: false })
+
+  const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetPassword/${resetToken}`
+  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Password reset token',
+      text: message,
+    })
+
+    res.status(200).json({ success: true, message: 'Email sent' })
+  } catch (error) {
+    user.resetPasswordExpire = undefined
+    user.resetPasswordToken = undefined
+
+    await user.save({ validateBeforeSave: false })
+
+    return next(new ErrorResponse('Email could not be sent', 500))
+  }
 
   res.status(200).json({ success: true, data: user })
 })
