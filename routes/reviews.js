@@ -1,5 +1,5 @@
 import express from 'express'
-import { getReviews } from '../controllers/reviews.js'
+import { getReview, getReviews } from '../controllers/reviews.js'
 import Review from '../models/Review.js'
 import { advancedResults } from '../middleware/advancedResults.js'
 import { protect, authorize } from '../middleware/auth.js'
@@ -13,5 +13,7 @@ router.route('/').get(
   }),
   getReviews
 )
+
+router.route('/:id').get(getReview)
 
 export default router
