@@ -9,6 +9,8 @@ import cookieParser from 'cookie-parser'
 import { connectDB } from './config/db.js'
 import { errorHandler } from './middleware/error.js'
 import mongoSanitize from 'express-mongo-sanitize'
+import helmet from 'helmet'
+import xss from 'xss-clean'
 import bootcamps from './routes/bootcamps.js'
 import courses from './routes/courses.js'
 import auth from './routes/auth.js'
@@ -31,6 +33,8 @@ app.use(cookieParser())
 app.use(fileUpload())
 
 app.use(mongoSanitize())
+app.use(helmet())
+app.use(xss())
 
 app.use(express.static(path.resolve(__dirname, 'public')))
 
