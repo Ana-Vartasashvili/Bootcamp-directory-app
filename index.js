@@ -8,6 +8,7 @@ import path from 'path'
 import cookieParser from 'cookie-parser'
 import { connectDB } from './config/db.js'
 import { errorHandler } from './middleware/error.js'
+import mongoSanitize from 'express-mongo-sanitize'
 import bootcamps from './routes/bootcamps.js'
 import courses from './routes/courses.js'
 import auth from './routes/auth.js'
@@ -28,6 +29,9 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use(fileUpload())
+
+app.use(mongoSanitize())
+
 app.use(express.static(path.resolve(__dirname, 'public')))
 
 app.use('/api/v1/bootcamps', bootcamps)
